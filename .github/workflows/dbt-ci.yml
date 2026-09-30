@@ -1,0 +1,39 @@
+name: dbt CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-dbt-tests:
+    name: Run dbt models and tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install dbt-core dbt-duckdb
+
+      - name: Run dbt seed (Load raw data)
+        run: |
+          dbt seed --profiles-dir .
+
+      - name: Run dbt models (Staging & Marts)
+        run: |
+          dbt run --profiles-dir .
+
+      - name: Run dbt tests (Data quality check)
+        run: |
+          dbt test --profiles-dir .
