@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: >
+      Cleaned customer model with canonical column names
+      and typed signup date.
+
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: "Customer's first name."
+
+      - name: last_name
+        description: "Customer's last name."
+
+      - name: email
+        description: "Customer's email address."
+
+      - name: signup_date
+        description: "Customer's signup date."
+
+  - name: stg_orders
+    description: >
+      Cleaned orders model with typed date and
+      customer identifier.
+
+    columns:
+      - name: order_id
+        description: "Unique order identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Customer identifier."
+
+      - name: order_date
+        description: "Date and time of order creation."
+
+      - name: status
+        description: "Current order status."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - completed
+                  - returned
+                  - placed
+                  - shipped
+
+  - name: stg_payments
+    description: >
+      Cleaned payments model with amounts
+      converted from cents to dollars.
+
+    columns:
+      - name: payment_id
+        description: "Unique payment identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        description: "Identifier of the related order."
+
+      - name: payment_method
+        description: "Payment method."
+
+      - name: amount
+        description: "Payment amount in dollars."

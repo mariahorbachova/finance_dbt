@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: >
+      Fact table of orders joined with payment data.
+
+    columns:
+      - name: order_id
+        description: "Unique order identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Customer identifier."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+
+      - name: order_date
+        description: "Date and time of the order."
+
+      - name: status
+        description: "Order status."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - completed
+                  - returned
+                  - placed
+                  - shipped
+
+      - name: payment_method
+        description: "Payment method."
+
+      - name: amount
+        description: "Payment amount in dollars."
+
+  - name: dim_customers
+    description: >
+      Customer mart with order dates, number of orders, and CLV.
+
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: "Customer's first name."
+
+      - name: last_name
+        description: "Customer's last name."
+
+      - name: signup_date
+        description: "Signup date."
+
+      - name: first_order_date
+        description: "Date of the first order."
+
+      - name: most_recent_order_date
+        description: "Date of the most recent order."
+
+      - name: number_of_orders
+        description: "Total number of orders."
+
+      - name: total_lifetime_value
+        description: >
+          Total payment amount for completed orders.
